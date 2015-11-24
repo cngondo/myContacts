@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 /**
  * Created by ngondo on 11/24/15.
@@ -22,8 +24,20 @@ public class myArrayAdapter extends ArrayAdapter<String> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater layoutInflater =(LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View rowView = layoutInflater.inflate(R.layout.custom_list,parent,false);
+        TextView name = (TextView) rowView.findViewById(R.id.contact_name);
+        ImageView icon = (ImageView) rowView.findViewById(R.id.image);
+        name.setText(values[position]);
 
 
-        return super.getView(position, convertView, parent);
+        String s = values[position];
+        if (s.startsWith("Ian"))
+        {
+            icon.setImageResource(R.drawable.ic_action);
+        }else{
+            icon.setImageResource(R.drawable.ic_action);
+        }
+
+        return rowView;
     }
 }
