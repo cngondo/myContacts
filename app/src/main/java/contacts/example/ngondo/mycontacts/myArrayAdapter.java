@@ -26,14 +26,15 @@ public class myArrayAdapter extends ArrayAdapter<String> {
         LayoutInflater layoutInflater =(LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = layoutInflater.inflate(R.layout.custom_list,parent,false);
         TextView name = (TextView) rowView.findViewById(R.id.contact_name);
+        TextView number = (TextView) rowView.findViewById(R.id.contact_number);
         ImageView icon = (ImageView) rowView.findViewById(R.id.image);
         name.setText(values[position]);
-
 
         String s = values[position];
         if (s.startsWith("Ian"))
         {
             icon.setImageResource(R.drawable.ic_action);
+            number.setText("084908492");
         }else{
             icon.setImageResource(R.drawable.ic_action);
         }
