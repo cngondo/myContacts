@@ -73,19 +73,18 @@ public class Home extends ListActivity {
 
                         //Update to firebase contacts node and
                         //Add a callback to check whether the data has beed sent
-                        thecontacts.setValue(contactsMap, new Firebase.CompletionListener() {
+                        thecontacts.push().setValue(contactsMap, new Firebase.CompletionListener() {
                             @Override
                             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                                 if (firebaseError != null) {
-                                    Toast.makeText(this,"Contact failed to save",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "Contact failed to save", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    System.out.println("Data saved successfully.");
+                                    Toast.makeText(getApplicationContext(), "Contact saved successfully", Toast.LENGTH_SHORT).show();
+
                                 }
                             }
                         });
-
-
-
+                        addContact.dismiss();
                     }
                 });
                 addContact.show();
