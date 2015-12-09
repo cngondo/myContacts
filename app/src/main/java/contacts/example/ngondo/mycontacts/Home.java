@@ -68,22 +68,17 @@ public class Home extends ListActivity {
 
                         // Adding a child node to firebase client
                         Firebase thecontacts = MYCONTACTS.child("contacts");
-                        Map<String, String> contactsMap = new HashMap<String, String>();
-                        contactsMap.put(theName, theNumber);
+                        // Getter for the name and contacts
+                        Contacts contacts = new Contacts(theName, theNumber);
+                        thecontacts.push().setValue(contacts);
+
+
+
 
                         //Update to firebase contacts node and
                         //Add a callback to check whether the data has beed sent
-                        thecontacts.push().setValue(contactsMap, new Firebase.CompletionListener() {
-                            @Override
-                            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                                if (firebaseError != null) {
-                                    Toast.makeText(getApplicationContext(), "Contact failed to save", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    Toast.makeText(getApplicationContext(), "Contact saved successfully", Toast.LENGTH_SHORT).show();
 
-                                }
-                            }
-                        });
+
                         addContact.dismiss();
                     }
                 });
