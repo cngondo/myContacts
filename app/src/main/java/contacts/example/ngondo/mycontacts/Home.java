@@ -70,15 +70,19 @@ public class Home extends ListActivity {
                         Firebase thecontacts = MYCONTACTS.child("contacts");
                         // Getter for the name and contacts
                         Contacts contacts = new Contacts(theName, theNumber);
-                        thecontacts.push().setValue(contacts);
-
-
-
-
                         //Update to firebase contacts node and
                         //Add a callback to check whether the data has beed sent
-
-
+                        thecontacts.push().setValue(contacts, new Firebase.CompletionListener() {
+                            @Override
+                            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                                if (firebaseError != null){
+                                    Toast.makeText(context,"Contact not saved! Check Connection", Toast.LENGTH_SHORT).show();
+                                }
+                                else{
+                                    Toast.makeText(context,"Contact saved Successfully", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
                         addContact.dismiss();
                     }
                 });
