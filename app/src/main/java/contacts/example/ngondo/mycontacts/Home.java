@@ -4,24 +4,26 @@ import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 import com.software.shell.fab.ActionButton;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class Home extends ListActivity {
-
     //Array of strings
     String [] contactArray = new String[] {"Ian", "John", "Corn", "Dolly"};
     final Context context = this;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,11 +31,12 @@ public class Home extends ListActivity {
         Firebase.setAndroidContext(this);
         //Initialize Firebase Client
         final Firebase MYCONTACTS = new Firebase("https://mycontacts254.firebaseio.com/");
-        /*Array adapter*/
-        setListAdapter(new myArrayAdapter(this, contactArray));
-        /*ListView listView = (ListView) findViewById(R.id.list_contacts);
-        listView.setAdapter(adapter);*/
-//        Declare the action button to the view and add a click listener
+
+        final Firebase thecontacts = MYCONTACTS.child("contacts");
+
+
+
+        // Declare the action button to the view and add a click listener
         ActionButton actionButton = (ActionButton) findViewById(R.id.action_button);
 
         actionButton.setOnClickListener(new View.OnClickListener() {
@@ -67,7 +70,6 @@ public class Home extends ListActivity {
                         String theName = contactName.getText().toString();
 
                         // Adding a child node to firebase client
-                        Firebase thecontacts = MYCONTACTS.child("contacts");
                         // Getter for the name and contacts
                         Contacts contacts = new Contacts(theName, theNumber);
                         //Update to firebase contacts node and
@@ -75,11 +77,10 @@ public class Home extends ListActivity {
                         thecontacts.push().setValue(contacts, new Firebase.CompletionListener() {
                             @Override
                             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                                if (firebaseError != null){
-                                    Toast.makeText(context,"Contact not saved! Check Connection", Toast.LENGTH_SHORT).show();
-                                }
-                                else{
-                                    Toast.makeText(context,"Contact saved Successfully", Toast.LENGTH_SHORT).show();
+                                if (firebaseError != null) {
+                                    Toast.makeText(context, "Contact not saved! Check Connection", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(context, "Contact saved Successfully", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
@@ -90,6 +91,33 @@ public class Home extends ListActivity {
             }
 
         });
+
+        //read Data from Firebase
+        thecontacts.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot contactsSnapshot : dataSnapshot.getChildren()) {
+                    Contacts contacts = contactsSnapshot.getValue(Contacts.class);
+                    Log.i("con", contacts.getcName() + ": " + contacts.getcNumber());
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                Toast.makeText(context, "The read failed!!", Toast.LENGTH_LONG).show();
+            }
+        });
+        /*Array adapter*/
+//        setListAdapter(new myArrayAdapter(this, contactArray));
+        FirebaseListAdapter mAdapter = new FirebaseListAdapter<Contacts>(MYCONTACTS.child("contacts"), Contacts.class, android.R.layout.two_line_list_item, this) {
+            @Override
+            protected void populateView(View v, Contacts contacts) {
+                ((TextView)v.findViewById(android.R.id.text1)).setText(contacts.getcName());
+                ((TextView)v.findViewById(android.R.id.text2)).setText(contacts.getcNumber());
+            }
+        };
+
+        setListAdapter(mAdapter);
 
     }
 
