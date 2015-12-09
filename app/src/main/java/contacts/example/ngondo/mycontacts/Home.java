@@ -23,7 +23,7 @@ public class Home extends ListActivity {
     String [] contactArray = new String[] {"Ian", "John", "Corn", "Dolly"};
     final Context context = this;
 
-
+    FirebaseListAdapter mAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,7 +89,6 @@ public class Home extends ListActivity {
                 });
                 addContact.show();
             }
-
         });
 
         //read Data from Firebase
@@ -101,7 +100,6 @@ public class Home extends ListActivity {
                     Log.i("con", contacts.getcName() + ": " + contacts.getcNumber());
                 }
             }
-
             @Override
             public void onCancelled(FirebaseError firebaseError) {
                 Toast.makeText(context, "The read failed!!", Toast.LENGTH_LONG).show();
@@ -109,7 +107,7 @@ public class Home extends ListActivity {
         });
         /*Array adapter*/
 //        setListAdapter(new myArrayAdapter(this, contactArray));
-        FirebaseListAdapter mAdapter = new FirebaseListAdapter<Contacts>(MYCONTACTS.child("contacts"), Contacts.class, android.R.layout.two_line_list_item, this) {
+        mAdapter = new FirebaseListAdapter<Contacts>(MYCONTACTS.child("contacts"), Contacts.class, android.R.layout.two_line_list_item, this) {
             @Override
             protected void populateView(View v, Contacts contacts) {
                 ((TextView)v.findViewById(android.R.id.text1)).setText(contacts.getcName());
@@ -120,6 +118,10 @@ public class Home extends ListActivity {
         setListAdapter(mAdapter);
 
     }
-
-
+    // To stop listening for changes in the firebase db
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mAdapter.cleanup();
+    }
 }
