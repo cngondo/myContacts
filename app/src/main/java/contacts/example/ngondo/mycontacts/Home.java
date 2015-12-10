@@ -29,18 +29,13 @@ public class Home extends ListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Firebase.setAndroidContext(this);
-        //Initialize Firebase Client
+        //Initialize Firebase Clients
         final Firebase MYCONTACTS = new Firebase("https://mycontacts254.firebaseio.com/");
-
         final Firebase thecontacts = MYCONTACTS.child("contacts");
-
-
 
         // Declare the action button to the view and add a click listener
         ActionButton actionButton = (ActionButton) findViewById(R.id.action_button);
-
         actionButton.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
                 //pop up a custom dialog for adding a new contact
@@ -105,16 +100,18 @@ public class Home extends ListActivity {
                 Toast.makeText(context, "The read failed!!", Toast.LENGTH_LONG).show();
             }
         });
-        /*Array adapter*/
-//        setListAdapter(new myArrayAdapter(this, contactArray));
-        mAdapter = new FirebaseListAdapter<Contacts>(MYCONTACTS.child("contacts"), Contacts.class, android.R.layout.two_line_list_item, this) {
+        /* Customized Array adapter
+        * To use your own customized layout, avoid using prefix "android".
+        * Just use "R" in the firebase list adapter params
+        * */
+        mAdapter = new FirebaseListAdapter<Contacts>(MYCONTACTS.child("contacts"), Contacts.class, R.layout.custom_list, this) {
             @Override
             protected void populateView(View v, Contacts contacts) {
-                ((TextView)v.findViewById(android.R.id.text1)).setText(contacts.getcName());
-                ((TextView)v.findViewById(android.R.id.text2)).setText(contacts.getcNumber());
+                ((TextView)v.findViewById(R.id.contact_name)).setText(contacts.getcName());
+                ((TextView)v.findViewById(R.id.contact_number)).setText(contacts.getcNumber());
             }
         };
-
+        // Adapter for the layout
         setListAdapter(mAdapter);
 
     }
